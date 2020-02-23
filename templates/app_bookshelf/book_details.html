@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contents %}
+
+<!-- CSSに書きたいけどBootstrap優先で反映されなかったので、ここに記述 -->
+<style>
+    /*モーダル全体の背景設定*/
+    .modal-content {
+        /* background: yellow; */
+    }
+
+    /*モーダルのbody要素の背景設定*/
+    .modal-body {
+        background: white;
+        /* word-break: keep-all; */
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /*モーダルが表示される速度を変更する*/
+    .modal.fade {
+        transition-duration: 0.5s;
+    }
+</style>
+
+
+<!-- ↓↓タイトル部分↓↓ -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center border-bottom mb-3">
+    <h1 class="h2 ml-5">詳細ページ</h1>
+</div>
+
+<div class="container">
+    <div class="col-lg-8 offset-lg-2">
+        <table class="table table-hover table-bordered">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">書籍名：</th>
+                    <td width="80%">{{ book_result.book_name }}</td width="90%">
+                </tr>
+                <tr>
+                    <th scope="row">著者名：</th>
+                    <td>{{ book_result.author.author_name }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">商品イメージ：</th>
+                    <td>
+                        <a href="{{ book_result.purchase_page_url }}">
+                            <img src="{{ book_result.image_url }}" alt="..." class="img-thumbnail">
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">商品説明：</th>
+                    <td>
+                        <div id="test">
+                            <p id="aaa">
+                                {{ book_result.book_detail }}
+                            </p>
+                        </div>
+
+                        <!-- 1.モーダルを表示する -->
+                        <a href="#" data-toggle="modal" data-target="#book_detail_modal"> >>>もっと読む</a>
+                        <!-- 2.モーダルの配置 -->
+                        <div class="modal fade bd-example-modal-lg" id="book_detail_modal" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <!-- 3.モーダルのコンテンツ -->
+                                <div class="modal-content">
+                                    <!-- 4.モーダルのヘッダ -->
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="modal-label"> 商品説明：{{ book_result.book_name }}</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <!-- 5.モーダルのボディ -->
+                                    <div class="modal-body">
+                                        <P>{{ book_result.book_detail }}<br></P>
+                                    </div>
+                                    <!-- 6.モーダルのフッタ -->
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                <tr>
+                    <th scope="row">レビュー：{{ len_review_result }}件</th>
+                    <td>
+                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel"
+                            data-interval="10000">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    {% if review_result_all %}
+                                    <div class="star-ratings-sprite">
+                                        <span style="width:{{review_result_all_star_100.0}}%"
+                                            class="star-ratings-sprite-rating"></span>
+                                    </div><br>
+                                    {{ review_result_all.0.book_review }}
+
+                                    {% else %}
+                                    <p>未だレビューはありません</p>
+                                    {% endif %}
+                                </div>
+
+                                {% for item1,item2 in reviews_stars %}
+                                <div class="carousel-item">
+                                    <div class="star-ratings-sprite">
+                                        <span style="width:{{item1}}%" class="star-ratings-sprite-rating"></span>
+                                    </div><br>
+                                    {{ item2 }}
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
+                                data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#carouselExampleControls" role="button"
+                                data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">マイ本棚：</th>
+                    <td>
+                        <!-- メソッドは"get" -->
+                        <form method="get" id="{{ book_result.id }}" action="/app_bookshelf/book_details/">
+                            {%csrf_token%}
+                            {{form.as_p }}
+                            <button type="submit" class="btn btn-outline-primary" class="btn btn-primary" name="submit"
+                                value="{{ book_result.id }}"
+                                onclick="document.forms['{{book_result.id}}'].submit();">追加する</button>
+                        </form>
+                        </td">
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

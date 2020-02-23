@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    {% load static %}
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    <link rel="stylesheet" type='text/css' href="{% static 'css/style.css'%}">
+    {% bootstrap_javascript jquery='full' %}
+    <title>タイトル</title>
+  </head>
+  <body>
+    <div class="container-fulid">
+      <div class="row">
+        <div class="col-12 mb-5">
+          <nav class="navbar navbar-light bg-info">
+            <a class="nav-item nav-link text-light" href="{% url 'app_bookshelf:my_page' %}"><img width="40%" src="{% static 'images/title_mybookshelf.png' %}"></a>
+            <a class="nav-item nav-link text-light" href="/accounts/login" >ログイン</a>
+            <a class="nav-item nav-link text-light" href="/accounts/logout" >ログアウト</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    
+    {% if messages %}
+      {% for message in messages %}
+          <div class="{{ message|bootstrap_message_classes }} alert-dismissable">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&#215;</button>
+              {{ message }}
+          </div>
+      {% endfor %}
+    {% endif %}
+
+    <script type="text/javascript">
+      $(function(){
+        setTimeout("$('.alert').fadeOut('slow')", 3000)
+      })
+
+
+   
+    <!-- 文字数制限-->
+      $(function () {
+        var $setElm = $('#test');　// 省略する文字のあるセレクタを取得
+        var cutFigure = '150'; // 表示する文字数
+        var afterTxt = ' …'; // 文字カット後に表示するテキスト
+
+        $setElm.each(function () {
+          var textLength = $(this).text().length;  // 文字数を取得
+          var textTrim = $(this).text().substr(0, (cutFigure))　 // 表示する数以上の文字をトリムする
+
+          if (cutFigure < textLength) {　　 // 文字数が表示数より多い場合
+            $(this).html(textTrim + afterTxt).css({ visibility: 'visible' });　 // カット後の文字数に…を追加
+          } else if (cutFigure >= textLength) {　　// 文字数が表示数以下の場合
+            $(this).css({ visibility: 'visible' });　　　 // そのまま表示
+          }
+        });
+      });
+
+
+
+   </script>
+
+
+    {% block contents %}
+    {% endblock %}
+  </body>
+</html>
